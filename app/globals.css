@@ -1,0 +1,29 @@
+@import 'tailwindcss';
+
+:root {
+	--background: #0a0a0a;
+	--foreground: #ededed;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+body {
+	color: var(--foreground);
+	background: var(--background);
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+@theme {
+	/* Definiowanie kolorów z Twojej konfiguracji */
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+
+	--color-primary: #d50174; /* Ten róż z pipety */
+	--color-dark: #0a0a0a;
+	--color-card: #171717;
+
+	/* Tailwind v4 automatycznie wykrywa pliki w /app, /components itp. */
+	/* Nie musisz już definiować tablicy 'content' */
+}
