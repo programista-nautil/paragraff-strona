@@ -91,7 +91,7 @@ export default function Home() {
 			</section>
 
 			{/* --- OFERTA --- */}
-			<section id='offer' className='py-24 px-6 bg-dark'>
+			<section id='offer' className='py-24 px-6 bg-zinc-900'>
 				<div className='max-w-7xl mx-auto'>
 					<div className='text-center mb-16'>
 						<h2 className='text-3xl font-bold uppercase tracking-widest mb-4'>Nasza Oferta</h2>
@@ -105,7 +105,7 @@ export default function Home() {
 						{OFFER_ITEMS.map(item => (
 							<div
 								key={item.title}
-								className='group p-8 rounded-2xl bg-card hover:bg-zinc-900 transition-all border border-white/5 hover:border-primary/30 flex flex-col items-center'>
+								className='group p-8 rounded-2xl bg-card bg-dark transition-all border border-white/5 hover:border-primary/30 flex flex-col items-center'>
 								<div className='relative w-32 h-32 mb-6 rounded-full overflow-hidden border-2 border-primary/20 group-hover:border-primary group-hover:scale-105 transition-all duration-300 p-6'>
 									<div className='relative w-full h-full'>
 										<Image src={item.imageSrc} alt={item.title} fill className='object-contain drop-shadow-md' />
@@ -121,9 +121,8 @@ export default function Home() {
 			</section>
 
 			{/* --- PORTFOLIO --- */}
-			{/* Screen 2: Kafelki. Zamiast 'kobiety w tle' która może być nieczytelna,
-          dajemy czyste tło z delikatnym gradientem, żeby zdjęcia prac były najważniejsze */}
-			<section id='portfolio' className='py-24 px-6 bg-zinc-950 relative overflow-hidden'>
+			{/* =========CHANGE========= Zmieniono bg-zinc-950 na bg-black (Głęboka czerń) żeby odciąć się od oferty */}
+			<section id='portfolio' className='py-24 px-6 bg-black relative overflow-hidden'>
 				{/* Dekoracyjny element w tle (subtelny dym/abstract) */}
 				<div className='absolute top-0 right-0 w-full h-full opacity-10 pointer-events-none bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/40 via-transparent to-transparent'></div>
 
@@ -160,7 +159,8 @@ export default function Home() {
 			</section>
 
 			{/* --- KONTAKT --- */}
-			<section id='contact' className='py-24 px-6 bg-dark'>
+			{/* =========CHANGE========= Zmieniono bg-dark na bg-zinc-900 (powrót do koloru z sekcji Oferta) */}
+			<section id='contact' className='py-24 px-6 bg-zinc-900'>
 				<div className='max-w-7xl mx-auto'>
 					<div className='grid md:grid-cols-2 gap-16 items-center'>
 						{/* Dane kontaktowe */}
@@ -208,7 +208,7 @@ export default function Home() {
 			<footer className='bg-black py-12 text-center border-t border-white/5'>
 				<div className='max-w-4xl mx-auto px-6'>
 					<p className='text-2xl font-serif italic text-gray-400 mb-4'>
-						&quot;Wiele rzeczy małych stało się wielkimi, tylko dzięki odpowiedniej reklamie.&quot;
+						"Wiele rzeczy małych stało się wielkimi, tylko dzięki odpowiedniej reklamie."
 					</p>
 					<p className='text-primary text-sm uppercase tracking-widest mb-8'>- Mark Twain</p>
 					<p className='text-xs text-gray-500 uppercase'>© 2026 Paragraff. All Rights Reserved.</p>
