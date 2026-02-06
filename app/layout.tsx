@@ -17,7 +17,7 @@ const siteUrl = 'https://paragraff.pl'
 export const metadata: Metadata = {
 	metadataBase: new URL(siteUrl),
 	title: {
-		default: 'Paragraff Toruń - Agencja Interaktywna',
+		default: 'Paragraff - Agencja Interaktywna',
 		template: '%s | Paragraff Toruń',
 	},
 	description:
