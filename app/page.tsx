@@ -60,6 +60,14 @@ export default function Home() {
 	const [currentSlide, setCurrentSlide] = useState(0)
 	const [selectedImage, setSelectedImage] = useState<string | null>(null)
 	const [activeSection, setActiveSection] = useState('')
+	const [isFirstLoad, setIsFirstLoad] = useState(true)
+
+	// Dodaj ten useEffect, żeby wykryć pierwszą zmianę slajdu
+	useEffect(() => {
+		if (currentSlide > 0) {
+			setIsFirstLoad(false)
+		}
+	}, [currentSlide])
 
 	// Slider logic
 	useEffect(() => {
@@ -234,43 +242,80 @@ export default function Home() {
 						))}
 
 						<div className='relative z-10 text-center px-4 max-w-4xl drop-shadow-2xl'>
-							<motion.h1
-								key={`title-${currentSlide}`}
-								initial={{ opacity: 0, scale: 0.9, y: 50 }}
-								animate={{ opacity: 1, scale: 1, y: 0 }}
-								transition={{ duration: 0.8, ease: 'easeOut' }}
-								className='text-5xl md:text-7xl font-bold mb-6 tracking-tight leading-tight text-white'>
-								{HERO_SLIDES[currentSlide].title}{' '}
-								<span className='text-primary'>{HERO_SLIDES[currentSlide].highlight}</span>
-							</motion.h1>
+							{/* mode='wait' sprawia, że stary tekst czeka z odejściem, 
+                        aż skończy animację, zanim pojawi się nowy. 
+                    */}
+							<AnimatePresence mode='wait'>
+								<motion.div
+									// Klucz na kontenerze wymusza przerysowanie całego bloku przy zmianie slajdu
+									key={currentSlide}
+									// Initial/Exit definiuje stan "niewidoczny" (przed wejściem i po wyjściu)
+									initial={{ opacity: 0, x: 20 }}
+									animate={{ opacity: 1, x: 0 }}
+									exit={{ opacity: 0, x: -20, transition: { duration: 0.3 } }} // Szybkie wyjście
+									transition={{ duration: 0.5 }}>
+									<motion.h1
+										// Tutaj zachowujemy logikę isFirstLoad dla pierwszego wjazdu z dołu
+										initial={{
+											y: isFirstLoad ? 50 : 0,
+											opacity: 0,
+										}}
+										animate={{ y: 0, opacity: 1 }}
+										transition={{
+											delay: isFirstLoad ? 1.5 : 0.2,
+											duration: 0.8,
+											ease: 'circOut',
+										}}
+										className='text-5xl md:text-7xl font-bold mb-6 tracking-tight leading-tight text-white'>
+										{HERO_SLIDES[currentSlide].title}{' '}
+										<span className='text-primary'>{HERO_SLIDES[currentSlide].highlight}</span>
+									</motion.h1>
 
-							<motion.p
-								key={`subtitle-${currentSlide}`}
-								initial={{ opacity: 0 }}
-								animate={{ opacity: 1 }}
-								transition={{ delay: 0.6, duration: 0.8 }}
-								className='text-xl md:text-2xl text-gray-300 font-light mb-10 tracking-wide'>
-								{HERO_SLIDES[currentSlide].subtitle}
-							</motion.p>
+									<motion.p
+										initial={{
+											y: isFirstLoad ? 30 : 0,
+											opacity: 0,
+										}}
+										animate={{ y: 0, opacity: 1 }}
+										transition={{
+											delay: isFirstLoad ? 1.8 : 0.4,
+											duration: 0.8,
+											ease: 'circOut',
+										}}
+										className='text-xl md:text-2xl text-gray-300 font-light mb-10 tracking-wide'>
+										{HERO_SLIDES[currentSlide].subtitle}
+									</motion.p>
 
-							<motion.a
-								href='#portfolio'
-								initial={{ opacity: 0, y: 20 }}
-								animate={{ opacity: 1, y: 0 }}
-								transition={{ delay: 1, type: 'spring', stiffness: 120 }}
-								whileTap={{ scale: 0.95 }}
-								className='inline-block border border-primary text-primary px-8 py-4 uppercase tracking-widest text-sm 
-					transition-all duration-300 
-					hover:scale-105 hover:bg-[#FF007F] hover:text-white hover:border-[#FF007F] mt-8'>
-								Zobacz Nasze Portfolio
-							</motion.a>
+									<motion.div
+										initial={{ opacity: 0, y: 20 }}
+										animate={{ opacity: 1, y: 0 }}
+										transition={{
+											delay: isFirstLoad ? 2.2 : 0.6,
+											duration: 0.8,
+											// TU MOŻESZ ZMIENIĆ EASE: 'easeInOut', 'circOut', 'backOut'
+											ease: 'circOut',
+										}}>
+										<motion.a
+											href='#portfolio'
+											whileHover={{ scale: 1.05, backgroundColor: '#FF007F', color: '#fff', borderColor: '#FF007F' }}
+											whileTap={{ scale: 0.95 }}
+											className='inline-block border border-primary text-primary px-8 py-4 uppercase tracking-widest text-sm 
+						transition-colors duration-300 mt-4'>
+											Zobacz Nasze Portfolio
+										</motion.a>
+									</motion.div>
+								</motion.div>
+							</AnimatePresence>
 						</div>
 
 						<div className='absolute bottom-10 left-1/2 transform -translate-x-1/2 flex gap-3 z-20'>
 							{HERO_SLIDES.map((_, idx) => (
 								<button
 									key={idx}
-									onClick={() => setCurrentSlide(idx)}
+									onClick={() => {
+										setCurrentSlide(idx)
+										setIsFirstLoad(false)
+									}}
 									className={`w-3 h-3 rounded-full transition-all ${
 										idx === currentSlide ? 'bg-primary w-8' : 'bg-white/50 hover:bg-white'
 									}`}
