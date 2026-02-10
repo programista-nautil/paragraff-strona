@@ -54,7 +54,6 @@ export default function Home() {
 				transition={{ duration: 0.6, ease: 'circOut' }}
 				className='fixed top-0 w-full z-50 bg-dark/90 backdrop-blur-md border-b border-white/10 shadow-lg'>
 				<div className='max-w-7xl mx-auto px-6 h-20 flex items-center justify-between'>
-					{/* LOGO - Obrazek */}
 					<div className='relative w-40 h-12'>
 						<div className='flex items-center h-full'>
 							<Image src='/logo.png' alt='Paragraff Logo' fill className='object-contain object-left' priority />
@@ -79,9 +78,7 @@ export default function Home() {
 			</motion.header>
 
 			{/* --- HERO SECTION --- */}
-			{/* Zastępujemy slider nowoczesnym Hero Image z gradientem */}
 			<section id='home' className='relative h-screen flex items-center justify-center overflow-hidden'>
-				{/* Tło */}
 				{HERO_SLIDES.map((slide, index) => (
 					<div
 						key={slide.id}
@@ -92,7 +89,6 @@ export default function Home() {
 							className={`relative w-full h-full transition-transform duration-[5000ms] ease-linear ${index === currentSlide ? 'scale-110' : 'scale-100'}`}>
 							<Image src={slide.image} alt={slide.alt} fill className='object-cover' priority={index === 0} />
 						</div>
-						{/* Gradient Overlay - żeby tekst był czytelny na każdym zdjęciu */}
 						<div className='absolute inset-0 bg-black/40' />
 						<div className='absolute inset-0 bg-gradient-to-b from-transparent via-dark/20 to-dark' />
 					</div>
@@ -118,9 +114,10 @@ export default function Home() {
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ delay: 1, type: 'spring', stiffness: 120 }}
-						whileHover={{ scale: 1.05, backgroundColor: '#FF007F', color: '#fff' }}
 						whileTap={{ scale: 0.95 }}
-						className='inline-block border border-primary text-primary px-8 py-4 uppercase tracking-widest text-sm transition-colors duration-300'>
+						className='inline-block border border-primary text-primary px-8 py-4 uppercase tracking-widest text-sm 
+             transition-all duration-300 
+             hover:scale-105 hover:bg-[#FF007F] hover:text-white hover:border-[#FF007F]'>
 						Zobacz Nasze Portfolio
 					</motion.a>
 				</div>
@@ -144,7 +141,7 @@ export default function Home() {
 					className='max-w-7xl mx-auto'
 					initial='hidden'
 					whileInView='visible'
-					viewport={{ once: true, margin: '-100px' }} // Animacja odpala się raz, gdy element wejdzie w widok
+					viewport={{ once: false, amount: 0.2, margin: '-50px' }}
 					variants={staggerContainer}>
 					<motion.div variants={fadeInUp} className='text-center mb-16'>
 						<h2 className='text-3xl font-bold uppercase tracking-widest mb-4'>Nasza Oferta</h2>
@@ -179,16 +176,15 @@ export default function Home() {
 			</section>
 
 			{/* --- PORTFOLIO --- */}
-			{/* =========CHANGE========= Zmieniono bg-zinc-950 na bg-black (Głęboka czerń) żeby odciąć się od oferty */}
 			<section id='portfolio' className='py-24 px-6 bg-black relative overflow-hidden'>
-				{/* Dekoracyjny element w tle (subtelny dym/abstract) */}
 				<div className='absolute top-0 right-0 w-full h-full opacity-10 pointer-events-none bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/40 via-transparent to-transparent'></div>
 
 				<motion.div
 					className='max-w-7xl mx-auto relative z-10'
 					initial='hidden'
 					whileInView='visible'
-					viewport={{ once: true, margin: '-100px' }}
+					// ZMIANA: powtarzalność animacji
+					viewport={{ once: false, amount: 0.1 }}
 					variants={staggerContainer}>
 					<motion.div variants={fadeInUp} className='text-center mb-16'>
 						<h2 className='text-3xl font-bold uppercase tracking-widest mb-2'>Portfolio</h2>
@@ -198,15 +194,14 @@ export default function Home() {
 					</motion.div>
 
 					<motion.div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-						{/* Wyświetla wszystkie elementy z tablicy PORTFOLIO_ITEMS */}
 						{PORTFOLIO_ITEMS.map(item => (
 							<motion.div
 								key={item.id}
 								variants={cardItem}
 								onClick={() => setSelectedImage(item.src)}
-								whileHover={{ scale: 1.02, zIndex: 10 }} // Powiększenie kafelka
+								whileHover={{ scale: 1.02, zIndex: 10 }}
 								whileTap={{ scale: 0.98 }}
-								className='relative group aspect-video overflow-hidden cursor-pointer bg-zinc-900 border border-white/5 shadow-lg'>
+								className='relative group aspect-video overflow-hidden cursor-pointer bg-zinc-900 border border-white/5 shadow-lg rounded-lg'>
 								<Image
 									src={item.src}
 									alt={item.category}
@@ -231,12 +226,12 @@ export default function Home() {
 			<section id='contact' className='py-24 px-6 bg-zinc-900'>
 				<div className='max-w-7xl mx-auto'>
 					<div className='grid md:grid-cols-2 gap-16 items-center'>
-						{/* Dane kontaktowe - wjazd z lewej */}
 						<motion.div
 							initial={{ opacity: 0, x: -50 }}
 							whileInView={{ opacity: 1, x: 0 }}
 							transition={{ duration: 0.8, ease: 'easeOut' }}
-							viewport={{ once: true }}>
+							// ZMIANA: powtarzalność animacji kontaktu
+							viewport={{ once: false, amount: 0.3 }}>
 							<h2 className='text-3xl font-bold uppercase tracking-widest mb-8'>Kontakt</h2>
 							<p className='text-gray-400 mb-10'>Zapraszamy do kontaktu z nami, odpowiemy na każde zapytanie.</p>
 
@@ -247,7 +242,8 @@ export default function Home() {
 										initial={{ opacity: 0, x: -20 }}
 										whileInView={{ opacity: 1, x: 0 }}
 										transition={{ delay: 0.2 + i * 0.1 }}
-										viewport={{ once: true }}>
+										// ZMIANA: pod-elementy też reagują na scrolla
+										viewport={{ once: false }}>
 										<h4 className='text-primary font-bold uppercase text-sm mb-2'>{title}</h4>
 										{title === 'Siedziba Firmy' && (
 											<>
@@ -272,13 +268,13 @@ export default function Home() {
 							</div>
 						</motion.div>
 
-						{/* Mapa - wjazd z prawej */}
 						<motion.div
 							className='h-[400px] w-full bg-zinc-800 rounded-lg overflow-hidden'
 							initial={{ opacity: 0, x: 50 }}
 							whileInView={{ opacity: 1, x: 0 }}
 							transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
-							viewport={{ once: true }}>
+							// ZMIANA: mapa też odświeża animację
+							viewport={{ once: false, amount: 0.3 }}>
 							<iframe
 								src='https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d9593.121677880214!2d18.7112283!3d53.0512687!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x471cccbd5c846dd1%3A0x3840ae2bb858c1af!2sParaGraff!5e0!3m2!1spl!2spl!4v1770281799407!5m2!1spl!2spl'
 								width='100%'
@@ -301,7 +297,6 @@ export default function Home() {
 				</div>
 			</footer>
 
-			{/* --- MODAL (Z AnimatePresence) --- */}
 			<AnimatePresence>
 				{selectedImage && (
 					<motion.div
