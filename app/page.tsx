@@ -74,7 +74,7 @@ export default function Home() {
 		if (isLoading) return
 		const interval = setInterval(() => {
 			setCurrentSlide(prev => (prev + 1) % HERO_SLIDES.length)
-		}, 10000) // ZMIANA: Z 5000 na 10000 (10 sekund)
+		}, 7000)
 		return () => clearInterval(interval)
 	}, [isLoading])
 
