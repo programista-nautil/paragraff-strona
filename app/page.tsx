@@ -71,10 +71,10 @@ export default function Home() {
 
 	// Slider logic
 	useEffect(() => {
-		if (isLoading) return // Nie uruchamiaj slidera pod loading screenem
+		if (isLoading) return
 		const interval = setInterval(() => {
 			setCurrentSlide(prev => (prev + 1) % HERO_SLIDES.length)
-		}, 5000)
+		}, 10000) // ZMIANA: Z 5000 na 10000 (10 sekund)
 		return () => clearInterval(interval)
 	}, [isLoading])
 
@@ -262,7 +262,7 @@ export default function Home() {
 										}}
 										animate={{ y: 0, opacity: 1 }}
 										transition={{
-											delay: isFirstLoad ? 1.5 : 0.2,
+											delay: isFirstLoad ? 0.2 : 0.2,
 											duration: 0.8,
 											ease: 'circOut',
 										}}
@@ -278,7 +278,7 @@ export default function Home() {
 										}}
 										animate={{ y: 0, opacity: 1 }}
 										transition={{
-											delay: isFirstLoad ? 1.8 : 0.4,
+											delay: isFirstLoad ? 0.4 : 0.4,
 											duration: 0.8,
 											ease: 'circOut',
 										}}
@@ -290,7 +290,7 @@ export default function Home() {
 										initial={{ opacity: 0, y: 20 }}
 										animate={{ opacity: 1, y: 0 }}
 										transition={{
-											delay: isFirstLoad ? 2.2 : 0.6,
+											delay: isFirstLoad ? 0.6 : 0.6,
 											duration: 0.8,
 											// TU MOŻESZ ZMIENIĆ EASE: 'easeInOut', 'circOut', 'backOut'
 											ease: 'circOut',
