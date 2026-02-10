@@ -11,16 +11,25 @@ export const HERO_SLIDES = [
 		id: 1,
 		image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=2000',
 		alt: 'Slide 1',
+		title: 'UNIKALNE',
+		highlight: 'KONCEPCJE',
+		subtitle: 'I ŚWIEŻE SPOJRZENIE NA KLIENTA',
 	},
 	{
 		id: 2,
 		image: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80&w=2000',
 		alt: 'Slide 2',
+		title: 'PROFESJONALNY',
+		highlight: 'DRUK',
+		subtitle: 'NAJWYŻSZA JAKOŚĆ I TERMINOWOŚĆ',
 	},
 	{
 		id: 3,
 		image: 'https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&q=80&w=2000',
 		alt: 'Slide 3',
+		title: 'KREATYWNE',
+		highlight: 'GADŻETY',
+		subtitle: 'KTÓRE BUDUJĄ TWÓJ WIZERUNEK',
 	},
 ]
 

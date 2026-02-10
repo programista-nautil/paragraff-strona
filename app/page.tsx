@@ -5,6 +5,8 @@ import Image from 'next/image'
 import { motion, AnimatePresence, Variants } from 'framer-motion'
 import { NAV_LINKS, OFFER_ITEMS, PORTFOLIO_ITEMS, HERO_SLIDES } from '@/data/mockData'
 
+// --- WARIANTY ANIMACJI ---
+
 const fadeInUp: Variants = {
 	hidden: { opacity: 0, y: 40 },
 	visible: {
@@ -34,16 +36,85 @@ const cardItem: Variants = {
 	},
 }
 
+// Nowe warianty dla efektu pisania (Typewriter)
+const quoteContainer: Variants = {
+	hidden: { opacity: 1 },
+	visible: {
+		opacity: 1,
+		transition: {
+			staggerChildren: 0.03, // Szybkość pojawiania się liter
+			delayChildren: 0.2,
+		},
+	},
+}
+
+const quoteLetter: Variants = {
+	hidden: { opacity: 0, y: 10 },
+	visible: {
+		opacity: 1,
+		y: 0,
+	},
+}
+
 export default function Home() {
 	const [currentSlide, setCurrentSlide] = useState(0)
 	const [selectedImage, setSelectedImage] = useState<string | null>(null)
+	// Stan dla aktywnej sekcji w menu
+	const [activeSection, setActiveSection] = useState('')
 
+	// Slider logic
 	useEffect(() => {
 		const interval = setInterval(() => {
 			setCurrentSlide(prev => (prev + 1) % HERO_SLIDES.length)
 		}, 5000)
 		return () => clearInterval(interval)
 	}, [])
+
+	// Scroll Spy Logic (Wykrywanie aktywnej sekcji)
+	useEffect(() => {
+		const handleScroll = () => {
+			const scrollPosition = window.scrollY + 150 // Zwiększyłem bufor, żeby szybciej łapało sekcje
+
+			// 1. WYKRYWANIE DOŁU STRONY (Dla kontaktu)
+			// Sprawdzamy, czy użytkownik jest blisko dołu strony (margines błędu 50px)
+			const isBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 50
+
+			if (isBottom) {
+				// Znajdź ostatni link, który jest kotwicą (zaczyna się od #)
+				// Reverse() i find() pozwala znaleźć ostatni pasujący element (czyli Kontakt)
+				const lastAnchorLink = [...NAV_LINKS].reverse().find(link => link.href.startsWith('#'))
+				if (lastAnchorLink) {
+					setActiveSection(lastAnchorLink.href)
+					return // Przerywamy funkcję, bo już wiemy, że to Kontakt
+				}
+			}
+
+			// 2. STANDARDOWE WYKRYWANIE (Dla reszty sekcji)
+			NAV_LINKS.forEach(link => {
+				// Pomijamy linki zewnętrzne (Gadżety)
+				if (!link.href.startsWith('#')) return
+
+				const section = document.querySelector(link.href) as HTMLElement
+				if (section) {
+					const sectionTop = section.offsetTop
+					const sectionHeight = section.offsetHeight
+
+					// Sprawdzamy, czy scroll jest w obrębie sekcji
+					if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+						setActiveSection(link.href)
+					}
+				}
+			})
+		}
+
+		window.addEventListener('scroll', handleScroll)
+		// Wywołujemy raz na starcie, żeby ustawić stan po odświeżeniu
+		handleScroll()
+
+		return () => window.removeEventListener('scroll', handleScroll)
+	}, [])
+
+	const quoteText = 'Wiele rzeczy małych stało się wielkimi, tylko dzięki odpowiedniej reklamie.'
 
 	return (
 		<main className='min-h-screen bg-dark text-white selection:bg-primary selection:text-white overflow-x-hidden'>
@@ -54,6 +125,7 @@ export default function Home() {
 				transition={{ duration: 0.6, ease: 'circOut' }}
 				className='fixed top-0 w-full z-50 bg-dark/90 backdrop-blur-md border-b border-white/10 shadow-lg'>
 				<div className='max-w-7xl mx-auto px-6 h-20 flex items-center justify-between'>
+					{/* LOGO */}
 					<div className='relative w-40 h-12'>
 						<div className='flex items-center h-full'>
 							<Image src='/logo.png' alt='Paragraff Logo' fill className='object-contain object-left' priority />
@@ -61,18 +133,30 @@ export default function Home() {
 					</div>
 
 					<nav className='hidden md:flex gap-8'>
-						{NAV_LINKS.map((link, i) => (
-							<motion.a
-								key={link.label}
-								href={link.href}
-								initial={{ opacity: 0, y: -20 }}
-								animate={{ opacity: 1, y: 0 }}
-								transition={{ delay: 0.1 + i * 0.1 }}
-								whileHover={{ scale: 1.1, color: '#FF007F' }}
-								className='text-sm uppercase tracking-widest hover:text-primary transition-colors font-medium'>
-								{link.label}
-							</motion.a>
-						))}
+						{NAV_LINKS.map((link, i) => {
+							const isActive = activeSection === link.href
+							return (
+								<motion.a
+									key={link.label}
+									href={link.href}
+									initial={{ opacity: 0, y: -20 }}
+									animate={{ opacity: 1, y: 0 }}
+									transition={{ delay: 0.1 + i * 0.1 }}
+									whileHover={{ scale: 1.1 }}
+									className={`text-sm uppercase tracking-widest transition-colors font-medium relative
+                                        ${isActive ? 'text-primary' : 'text-white hover:text-primary'}
+                                    `}>
+									{link.label}
+									{/* Opcjonalnie: Kropka pod aktywnym linkiem */}
+									{isActive && (
+										<motion.span
+											layoutId='activeSection'
+											className='absolute -bottom-2 left-0 right-0 h-0.5 bg-primary'
+										/>
+									)}
+								</motion.a>
+							)
+						})}
 					</nav>
 				</div>
 			</motion.header>
@@ -96,18 +180,22 @@ export default function Home() {
 
 				<div className='relative z-10 text-center px-4 max-w-4xl drop-shadow-2xl'>
 					<motion.h1
+						key={`title-${currentSlide}`}
 						initial={{ opacity: 0, scale: 0.9, y: 50 }}
 						animate={{ opacity: 1, scale: 1, y: 0 }}
 						transition={{ duration: 0.8, ease: 'easeOut' }}
 						className='text-5xl md:text-7xl font-bold mb-6 tracking-tight leading-tight text-white'>
-						UNIKALNE <span className='text-primary'>KONCEPCJE</span>
+						{HERO_SLIDES[currentSlide].title}{' '}
+						<span className='text-primary'>{HERO_SLIDES[currentSlide].highlight}</span>
 					</motion.h1>
+
 					<motion.p
+						key={`subtitle-${currentSlide}`}
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						transition={{ delay: 0.6, duration: 0.8 }}
 						className='text-xl md:text-2xl text-gray-300 font-light mb-10 tracking-wide'>
-						I ŚWIEŻE SPOJRZENIE NA KLIENTA
+						{HERO_SLIDES[currentSlide].subtitle}
 					</motion.p>
 					<motion.a
 						href='#portfolio'
@@ -179,25 +267,36 @@ export default function Home() {
 			<section id='portfolio' className='py-24 px-6 bg-black relative overflow-hidden'>
 				<div className='absolute top-0 right-0 w-full h-full opacity-10 pointer-events-none bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/40 via-transparent to-transparent'></div>
 
-				<motion.div
-					className='max-w-7xl mx-auto relative z-10'
-					initial='hidden'
-					whileInView='visible'
-					// ZMIANA: powtarzalność animacji
-					viewport={{ once: false, amount: 0.1 }}
-					variants={staggerContainer}>
-					<motion.div variants={fadeInUp} className='text-center mb-16'>
+				<div className='max-w-7xl mx-auto relative z-10'>
+					{/* Nagłówek sekcji zostawiamy z animacją od dołu */}
+					<motion.div
+						variants={fadeInUp}
+						initial='hidden'
+						whileInView='visible'
+						viewport={{ once: false }}
+						className='text-center mb-16'>
 						<h2 className='text-3xl font-bold uppercase tracking-widest mb-2'>Portfolio</h2>
 						<p className='text-gray-400 uppercase text-sm tracking-widest'>
 							Zapraszamy do zapoznania się z naszymi realizacjami
 						</p>
 					</motion.div>
 
-					<motion.div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-						{PORTFOLIO_ITEMS.map(item => (
+					<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+						{PORTFOLIO_ITEMS.map((item, i) => (
 							<motion.div
 								key={item.id}
-								variants={cardItem}
+								// Ustawiamy animację indywidualnie dla każdego kafelka
+								initial={{ opacity: 0, y: 50 }}
+								whileInView={{ opacity: 1, y: 0 }}
+								// viewport reaguje na wejście każdego kafelka z osobna
+								viewport={{ once: false, amount: 0.2 }}
+								transition={{
+									duration: 0.5,
+									ease: 'easeOut',
+									// Mały trik: opóźnienie zależy od kolumny (0, 1 lub 2), a nie od wiersza.
+									// Dzięki temu przy scrollowaniu wierszami zawsze wygląda to dobrze.
+									delay: (i % 3) * 0.1,
+								}}
 								onClick={() => setSelectedImage(item.src)}
 								whileHover={{ scale: 1.02, zIndex: 10 }}
 								whileTap={{ scale: 0.98 }}
@@ -208,18 +307,17 @@ export default function Home() {
 									fill
 									className='object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100'
 								/>
-								<div className='absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center '>
+								<div className='absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center'>
 									<motion.span
-										initial={{ y: 20, opacity: 0 }}
-										whileInView={{ y: 0, opacity: 1 }}
+										// Resetujemy animację wewnątrz, żeby nie migała przy scrollu, tylko przy hoverze
 										className='text-primary font-bold uppercase tracking-widest border border-primary px-4 py-2 hover:bg-primary hover:text-white transition-colors'>
 										{item.category}
 									</motion.span>
 								</div>
 							</motion.div>
 						))}
-					</motion.div>
-				</motion.div>
+					</div>
+				</div>
 			</section>
 
 			{/* --- KONTAKT --- */}
@@ -289,10 +387,30 @@ export default function Home() {
 			{/* --- FOOTER --- */}
 			<footer className='bg-black py-12 text-center border-t border-white/5'>
 				<div className='max-w-4xl mx-auto px-6'>
-					<p className='text-2xl font-serif italic text-gray-400 mb-4'>
-						"Wiele rzeczy małych stało się wielkimi, tylko dzięki odpowiedniej reklamie."
-					</p>
-					<p className='text-primary text-sm uppercase tracking-widest mb-8'>- Mark Twain</p>
+					{/* Typewriter Effect */}
+					<motion.p
+						className='text-2xl font-serif italic text-gray-400 mb-4 inline-block'
+						variants={quoteContainer}
+						initial='hidden'
+						whileInView='visible'
+						// Jeśli chcesz żeby pisało tylko raz: once: true
+						// Jeśli chcesz żeby pisało za każdym razem jak zjedziesz na dół: once: false
+						viewport={{ once: false, amount: 0.5 }}>
+						{quoteText.split('').map((char, index) => (
+							<motion.span key={index} variants={quoteLetter}>
+								{char}
+							</motion.span>
+						))}
+					</motion.p>
+
+					<motion.p
+						initial={{ opacity: 0 }}
+						whileInView={{ opacity: 1 }}
+						transition={{ delay: 2 }}
+						className='text-primary text-sm uppercase tracking-widest mb-8'>
+						- Mark Twain
+					</motion.p>
+
 					<p className='text-xs text-gray-500 uppercase'>© 2026 Paragraff. All Rights Reserved.</p>
 				</div>
 			</footer>
